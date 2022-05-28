@@ -41,25 +41,43 @@ for (var i = 0; i < 1; i++) {
     // HTMLCollection { 0: div, 1: div, 2: div, 3: div, 4: div, 5: div, 6: div, 7: div, 8: div, 9: div, … }
     contacts = document.getElementsByClassName("ReactVirtualized__Grid__innerScrollContainer")[0]["children"];
 
-    // TODO: Iterate through all userids, extracting user information
-    // for item in class "ReactVirtualized__Grid__innerScrollContainer"
-        // decend to: div role=listitem
-        // extract div id: userid = [id=HubPersonaID_...]
-            // select this user: clickEvent(userid)
+    // Iterate through all contacts listed
+    for (index = 0; index < contacts.length; index++) {
 
-            // Store extracted information for the currently selected user here
-            let new_user;
+        // Obtain contact element
+        let contacts_listitem = contacts[index];
+        let contacts_entry = contacts_listitem["children"][0]
+        
+        // Click contact
+        contacts_entry.dispatchEvent(clickEvent);
 
-            // TODO: try-catch, as non-users (groups) will not have a department
-            // Extract currently displayed user
-            new_user = getCurrentlyViewedUser();
 
-            // Add new user to the all_users array
-            all_users.push(new_user);
+        // Create variable for storing extracted information
+        let new_user;
 
-            console.log('New user: ' + new_user);
-    
+        // try-catch, as non-users (groups) will not have a department and therefore extraction will fail
+        // may also account for contact details taking a while to load
+        let retry = 3;
+        for (i = 0; i < retry; i++) {
+            try {
+                // Extract currently displayed user information
+                new_user = getCurrentlyViewedUser();
+
+                // Add user information to the all_users array
+                all_users.push(new_user);
+
+                console.log('New user: ' + new_user);
+
+                // stop retrying, we successfully extracted
+                i = retry;
+            
+            } catch (err) {
+                console.log('Error occurred during user info extraction: Attempt ' + i + ': ' + err);
+            }
+        }
+    }
     // TODO: Download all_users as a .csv file
+    console.log(all_users);
 }
 
 // Inspired by: https://github.com/edubey/browser-console-crawl/blob/master/single-story.js
