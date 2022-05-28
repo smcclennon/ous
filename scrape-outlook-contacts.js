@@ -28,11 +28,16 @@ for (var i = 0; i < 1; i++) {
         full_name = document.querySelectorAll("[data-log-name=PersonName]")[0]["textContent"];
 
         // Get department
-        try {
-            department = document.querySelectorAll("[data-log-name=Department]")[0]["textContent"];
-        } catch (err) {
-            // If the element does not have a department, set this field to '?'
-            department = '?';
+        // TODO: Properly wait for the department to load, instead of flooding retry attempts
+        let retry = 1000;
+        for (i = 0; i < retry; i++) {
+            try {
+                department = document.querySelectorAll("[data-log-name=Department]")[0]["textContent"];
+                i = retry;
+            } catch (err) {
+                // If the element does not have a department, set this field to '?'
+                department = '?';
+            }
         }
         
         return [email, full_name, department];
@@ -81,7 +86,9 @@ for (var i = 0; i < 1; i++) {
                 console.log('Error occurred during user info extraction: Attempt ' + i + ': ' + err);
             }
         }
+        // TODO: Auto-scroll down the contacts list to load more elements. Wait for elements to load correctly.
     }
+    
     // TODO: Download all_users as a .csv file
     console.log(all_users);
 }
