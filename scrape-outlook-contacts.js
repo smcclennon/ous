@@ -62,7 +62,8 @@ for (var i = 0; i < 1; i++) {
 
         // try-catch, as non-users (groups) will not have a department and therefore extraction will fail
         // may also account for contact details taking a while to load
-        let retry = 3;
+        // Number of times to retry if user info extraction fails
+        let retry = 1;
         for (i = 0; i < retry; i++) {
             try {
                 // Extract currently displayed user information
