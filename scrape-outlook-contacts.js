@@ -50,6 +50,7 @@ for (var i = 0; i < 1; i++) {
             // Store extracted information for the currently selected user here
             let new_user;
 
+            // TODO: try-catch, as non-users (groups) will not have a department
             // Extract currently displayed user
             new_user = getCurrentlyViewedUser();
 
@@ -57,7 +58,8 @@ for (var i = 0; i < 1; i++) {
             all_users.push(new_user);
 
             console.log('New user: ' + new_user);
-        // }
+    
+    // TODO: Download all_users as a .csv file
 }
 
 // Inspired by: https://github.com/edubey/browser-console-crawl/blob/master/single-story.js
