@@ -38,7 +38,8 @@ for (var i = 0; i < 1; i++) {
     const all_users = [];
 
     // Contacts list being displayed 
-    contacts = document.getElementsByClassName("ReactVirtualized__Grid__innerScrollContainer")[0]["children"][0];
+    // HTMLCollection { 0: div, 1: div, 2: div, 3: div, 4: div, 5: div, 6: div, 7: div, 8: div, 9: div, … }
+    contacts = document.getElementsByClassName("ReactVirtualized__Grid__innerScrollContainer")[0]["children"];
 
     // TODO: Iterate through all userids, extracting user information
     // for item in class "ReactVirtualized__Grid__innerScrollContainer"
