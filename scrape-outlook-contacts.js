@@ -28,7 +28,12 @@ for (var i = 0; i < 1; i++) {
         full_name = document.querySelectorAll("[data-log-name=PersonName]")[0]["textContent"];
 
         // Get department
-        department = document.querySelectorAll("[data-log-name=Department]")[0]["textContent"];
+        try {
+            department = document.querySelectorAll("[data-log-name=Department]")[0]["textContent"];
+        } catch (err) {
+            // If the element does not have a department, set this field to '?'
+            department = '?';
+        }
         
         return [email, full_name, department];
     }
