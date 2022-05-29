@@ -62,7 +62,7 @@ for (var i = 0; i < 1; i++) {
             "x-owa-canary": "-xxxxxxxxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.",
             "x-owa-correlationid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
             "x-owa-sessionid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
-            "x-owa-urlpostdata": "%7B%22__type%22%3A%22GetPersonaJsonRequest%3A%23Exchange%22%2C%22Header%22%3A%7B%22__type%22%3A%22JsonRequestHeaders%3A%23Exchange%22%2C%22RequestServerVersion%22%3A%22V2018_01_08%22%2C%22TimeZoneContext%22%3A%7B%22__type%22%3A%22TimeZoneContext%3A%23Exchange%22%2C%22TimeZoneDefinition%22%3A%7B%22__type%22%3A%22TimeZoneDefinitionType%3A%23Exchange%22%2C%22Id%22%3A%22GMT%20Standard%20Time%22%7D%7D%7D%2C%22Body%22%3A%7B%22__type%22%3A%22GetPersonaRequest%3A%23Exchange%22%2C%22PersonaId%22%3A%7B%22__type%22%3A%22ItemId%3A%23Exchange%22%2C%22Id%22"+contactID+"%22%7D%7D%7D",
+            "x-owa-urlpostdata": "%7B%22__type%22%3A%22GetPersonaJsonRequest%3A%23Exchange%22%2C%22Header%22%3A%7B%22__type%22%3A%22JsonRequestHeaders%3A%23Exchange%22%2C%22RequestServerVersion%22%3A%22V2018_01_08%22%2C%22TimeZoneContext%22%3A%7B%22__type%22%3A%22TimeZoneContext%3A%23Exchange%22%2C%22TimeZoneDefinition%22%3A%7B%22__type%22%3A%22TimeZoneDefinitionType%3A%23Exchange%22%2C%22Id%22%3A%22GMT%20Standard%20Time%22%7D%7D%7D%2C%22Body%22%3A%7B%22__type%22%3A%22GetPersonaRequest%3A%23Exchange%22%2C%22PersonaId%22%3A%7B%22__type%22%3A%22ItemId%3A%23Exchange%22%2C%22Id%22%3A%22"+contactID+"%22%7D%7D%7D",
             "x-req-source": "People",
             "Sec-Fetch-Dest": "empty",
             "Sec-Fetch-Mode": "cors",
@@ -74,7 +74,7 @@ for (var i = 0; i < 1; i++) {
         "method": "POST",
         "mode": "cors"
         })
-        .then(data => data.json()
+        .then(data => data.json())
         .then((response => {
             user = response["Body"]["Persona"];
             emailaddress = user["EmailAddress"]["EmailAddress"];
@@ -82,7 +82,7 @@ for (var i = 0; i < 1; i++) {
             //department = ...
             userdata = [emailaddress,displayname,'?'];
             saveUser(userdata);
-        })));
+        }));
     }
 
     // Store all extracted user information
@@ -100,6 +100,7 @@ for (var i = 0; i < 1; i++) {
         let contacts_listitem = contacts[index];
         let contacts_entry = contacts_listitem["children"][0];
         let contacts_entry_id = contacts_entry["id"];
+        contacts_entry_id = contacts_entry_id.replace("HubPersonaId_", "");
         console.log('got id: ' + contacts_entry_id);
 
         // Create variable for storing extracted information
@@ -129,11 +130,3 @@ for (var i = 0; i < 1; i++) {
 }
 
 // Inspired by: https://github.com/edubey/browser-console-crawl/blob/master/single-story.js
-
-/*
-Uncaught (in promise) TypeError: user is undefined
-    extractUserFromID debugger eval code:80
-    promise callback*extractUserFromID/< debugger eval code:78
-    promise callback*extractUserFromID debugger eval code:77
-    <anonymous> debugger eval code:115
-*/
