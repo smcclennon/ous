@@ -88,14 +88,14 @@
 
         // Iterate through all contacts listed
         for (index = 0; index < contacts.length; index++) {
-            console.log('iteration loop: ' + index)
+            console.debug('Iteration loop: ' + index)
 
             // Obtain contact ID
             let contacts_listitem = contacts[index];
             let contacts_entry = contacts_listitem["children"][0];
             let contacts_entry_id = contacts_entry["id"];
             contacts_entry_id = contacts_entry_id.replace("HubPersonaId_", "");
-            console.log('got id: ' + contacts_entry_id);
+            console.debug('Got ID: ' + contacts_entry_id);
 
             // try-catch, as non-users (groups) will not have a department and therefore extraction will fail
             // may also account for contact details taking a while to load
