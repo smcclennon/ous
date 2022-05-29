@@ -42,8 +42,14 @@ for (var i = 0; i < 1; i++) {
         
         return [email, full_name, department];
     }
-    async function getUserFromID(contactID) {
-        response = await fetch("https://outlook.office.com/owa/service.svc?action=GetPersona&app=People", {
+
+    function saveUser(userdata) {
+        all_users.push(userdata);
+        console.log('New user: ' + userdata);
+    }
+
+    async function extractUserFromID(contactID) {
+        fetch("https://outlook.office.com/owa/service.svc?action=GetPersona&app=People", {
         "credentials": "include",
         "headers": {
             "User-Agent": "Mozilla/5.0 (X11; U; Linux x86_64; en-US) Gecko/20072401 Firefox/98.0",
@@ -67,15 +73,16 @@ for (var i = 0; i < 1; i++) {
         },
         "method": "POST",
         "mode": "cors"
-        });
-        response.json().then(data => {
-            response_json = data;
-            user = response_json["Body"]["Persona"];
+        })
+        .then(data => data.json()
+        .then((response => {
+            user = response["Body"]["Persona"];
             emailaddress = user["EmailAddress"]["EmailAddress"];
             displayname = user["DisplayName"];
             //department = ...
-            return [emailaddress,displayname,'?'];
-        });
+            userdata = [emailaddress,displayname,'?'];
+            saveUser(userdata);
+        })));
     }
 
     // Store all extracted user information
@@ -87,11 +94,13 @@ for (var i = 0; i < 1; i++) {
 
     // Iterate through all contacts listed
     for (index = 0; index < contacts.length; index++) {
+        console.log('iteration loop: ' + index)
 
         // Obtain contact ID
         let contacts_listitem = contacts[index];
         let contacts_entry = contacts_listitem["children"][0];
         let contacts_entry_id = contacts_entry["id"];
+        console.log('got id: ' + contacts_entry_id);
 
         // Create variable for storing extracted information
         let new_user;
@@ -102,13 +111,8 @@ for (var i = 0; i < 1; i++) {
         let retry = 1;
         for (i = 0; i < retry; i++) {
             try {
-                // Extract currently displayed user information
-                new_user = getUserFromID(contacts_entry_id);
-
-                // Add user information to the all_users array
-                all_users.push(new_user);
-
-                console.log('New user: ' + new_user);
+                // Extract currently displayed user information and save
+                extractUserFromID(contacts_entry_id);
 
                 // stop retrying, we successfully extracted
                 i = retry;
@@ -128,7 +132,8 @@ for (var i = 0; i < 1; i++) {
 
 /*
 Uncaught (in promise) TypeError: user is undefined
-    getUserFromID debugger eval code:74
-    promise callback*getUserFromID debugger eval code:71
-    async* debugger eval code:106
+    extractUserFromID debugger eval code:80
+    promise callback*extractUserFromID/< debugger eval code:78
+    promise callback*extractUserFromID debugger eval code:77
+    <anonymous> debugger eval code:115
 */
