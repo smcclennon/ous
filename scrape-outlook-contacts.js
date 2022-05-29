@@ -42,7 +42,41 @@ for (var i = 0; i < 1; i++) {
         
         return [email, full_name, department];
     }
-
+    async function getUserFromID(contactID) {
+        response = await fetch("https://outlook.office.com/owa/service.svc?action=GetPersona&app=People", {
+        "credentials": "include",
+        "headers": {
+            "User-Agent": "Mozilla/5.0 (X11; U; Linux x86_64; en-US) Gecko/20072401 Firefox/98.0",
+            "Accept": "*/*",
+            "Accept-Language": "en-US,en;q=0.5",
+            "action": "GetPersona",
+            "content-type": "application/json; charset=utf-8",
+            "ms-cv": "xxxxxxxxxx+xxxxxxxxxxx.46",
+            "prefer": "exchange.behavior=\"IncludeThirdPartyOnlineMeetingProviders\"",
+            "x-owa-canary": "-xxxxxxxxxxxxxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.",
+            "x-owa-correlationid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "x-owa-sessionid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+            "x-owa-urlpostdata": "%7B%22__type%22%3A%22GetPersonaJsonRequest%3A%23Exchange%22%2C%22Header%22%3A%7B%22__type%22%3A%22JsonRequestHeaders%3A%23Exchange%22%2C%22RequestServerVersion%22%3A%22V2018_01_08%22%2C%22TimeZoneContext%22%3A%7B%22__type%22%3A%22TimeZoneContext%3A%23Exchange%22%2C%22TimeZoneDefinition%22%3A%7B%22__type%22%3A%22TimeZoneDefinitionType%3A%23Exchange%22%2C%22Id%22%3A%22GMT%20Standard%20Time%22%7D%7D%7D%2C%22Body%22%3A%7B%22__type%22%3A%22GetPersonaRequest%3A%23Exchange%22%2C%22PersonaId%22%3A%7B%22__type%22%3A%22ItemId%3A%23Exchange%22%2C%22Id%22"+contactID+"%22%7D%7D%7D",
+            "x-req-source": "People",
+            "Sec-Fetch-Dest": "empty",
+            "Sec-Fetch-Mode": "cors",
+            "Sec-Fetch-Site": "same-origin",
+            "Sec-GPC": "1",
+            "Pragma": "no-cache",
+            "Cache-Control": "no-cache"
+        },
+        "method": "POST",
+        "mode": "cors"
+        });
+        response.json().then(data => {
+            response_json = data;
+            user = response_json["Body"]["Persona"];
+            emailaddress = user["EmailAddress"]["EmailAddress"];
+            displayname = user["DisplayName"];
+            //department = ...
+            return [emailaddress,displayname,'?'];
+        });
+    }
 
     // Store all extracted user information
     const all_users = [];
@@ -54,13 +88,10 @@ for (var i = 0; i < 1; i++) {
     // Iterate through all contacts listed
     for (index = 0; index < contacts.length; index++) {
 
-        // Obtain contact element
+        // Obtain contact ID
         let contacts_listitem = contacts[index];
-        let contacts_entry = contacts_listitem["children"][0]
-        
-        // Click contact
-        contacts_entry.dispatchEvent(clickEvent);
-
+        let contacts_entry = contacts_listitem["children"][0];
+        let contacts_entry_id = contacts_entry["id"];
 
         // Create variable for storing extracted information
         let new_user;
@@ -72,7 +103,7 @@ for (var i = 0; i < 1; i++) {
         for (i = 0; i < retry; i++) {
             try {
                 // Extract currently displayed user information
-                new_user = getCurrentlyViewedUser();
+                new_user = getUserFromID(contacts_entry_id);
 
                 // Add user information to the all_users array
                 all_users.push(new_user);
@@ -94,3 +125,10 @@ for (var i = 0; i < 1; i++) {
 }
 
 // Inspired by: https://github.com/edubey/browser-console-crawl/blob/master/single-story.js
+
+/*
+Uncaught (in promise) TypeError: user is undefined
+    getUserFromID debugger eval code:74
+    promise callback*getUserFromID debugger eval code:71
+    async* debugger eval code:106
+*/
