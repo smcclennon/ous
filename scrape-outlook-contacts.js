@@ -1,10 +1,10 @@
-// Scrape all users on your Office 365 Outlook people directory
+// Scrape all users from an Office 365 Outlook people directory
 // github.com/smcclennon
 
 // Delete all variables created in this block once execution finishes
 (async () => {
 
-    // These need to be replaced with valid values or the API request will fail
+    // This needs to be replaced with valid values or the API request will fail
     const base_folder_id = "a000a000-0aa0-0a0a-aa00-a000a0000a0a"
 
     // Get cookie. Used to get x-owa-canary
