@@ -7,6 +7,19 @@
     // These need to be replaced with valid values or the API request will fail
     const base_folder_id = "a000a000-0aa0-0a0a-aa00-a000a0000a0a"
 
+    // Get cookie. Used to get x-owa-canary
+    // https://www.tabnine.com/academy/javascript/how-to-get-cookies/
+    function getCookie(cName) {
+        const name = cName + "=";
+        const cDecoded = decodeURIComponent(document.cookie); //to be careful
+        const cArr = cDecoded.split('; ');
+        let res;
+        cArr.forEach(val => {
+          if (val.indexOf(name) === 0) res = val.substring(name.length);
+        })
+        return res
+      }
+
     // Download text to a file
     // https://stackoverflow.com/a/47359002
     function saveAs(text, filename){
@@ -65,6 +78,10 @@
         let users = response.Body.ResultSet;
         return users
     }
+
+    // Get x-owa-canary
+    console.debug('Getting x-owa-canary...')
+    const canary = getCookie("X-OWA-CANARY");
 
     // Store all extracted user data
     // [[id1, John Smith, jsmith@example.com], [id2, Foo Bar, fbar@example.com]]
