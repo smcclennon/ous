@@ -23,17 +23,17 @@
             let department;
 
             // Get email
-            email = document.querySelectorAll("[data-log-name=Email]")[1]["children"][0]["children"][0]["children"][0]["children"][0]["children"][1]["textContent"];
+            email = document.querySelectorAll("[data-log-name=Email]")[1].children[0].children[0].children[0].children[0].children[1].textContent;
 
             // Get full name
-            full_name = document.querySelectorAll("[data-log-name=PersonName]")[0]["textContent"];
+            full_name = document.querySelectorAll("[data-log-name=PersonName]")[0].textContent;
 
             // Get department
             // TODO: Properly wait for the department to load, instead of flooding retry attempts
             const retry = 1000;
             for (let i = 0; i < retry; i++) {
                 try {
-                    department = document.querySelectorAll("[data-log-name=Department]")[0]["textContent"];
+                    department = document.querySelectorAll("[data-log-name=Department]")[0].textContent;
                     i = retry;
                 } catch (err) {
                     // If the element does not have a department, set this field to '?'
@@ -71,9 +71,9 @@
                 "mode": "cors"
             })
                 .then(data => data.json());
-            let user = response["Body"]["Persona"];
-            let emailaddress = user["EmailAddress"]["EmailAddress"];
-            let displayname = user["DisplayName"];
+            let user = response.Body.Persona;
+            let emailaddress = user.EmailAddress.EmailAddress;
+            let displayname = user.DisplayName;
             let department = '?';
             let userdata = [contactID, emailaddress, displayname, department];
             return userdata;
@@ -84,7 +84,7 @@
 
         // Contacts list being displayed 
         // HTMLCollection { 0: div, 1: div, 2: div, 3: div, 4: div, 5: div, 6: div, 7: div, 8: div, 9: div, … }
-        contacts = document.getElementsByClassName("ReactVirtualized__Grid__innerScrollContainer")[0]["children"];
+        contacts = document.getElementsByClassName("ReactVirtualized__Grid__innerScrollContainer")[0].children;
 
         // Iterate through all contacts listed
         for (let index = 0; index < contacts.length; index++) {
@@ -92,8 +92,8 @@
 
             // Obtain contact ID
             let contacts_listitem = contacts[index];
-            let contacts_entry = contacts_listitem["children"][0];
-            let contacts_entry_id = contacts_entry["id"];
+            let contacts_entry = contacts_listitem.children[0];
+            let contacts_entry_id = contacts_entry.id;
             contacts_entry_id = contacts_entry_id.replace("HubPersonaId_", "");
             console.debug('Got ID: ' + contacts_entry_id);
 
