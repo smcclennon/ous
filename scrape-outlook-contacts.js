@@ -3,7 +3,7 @@
 
 // Delete all variables created in this block once execution finishes
 (async () => {
-    for (var i = 0; i < 1; i++) {
+    for (let i = 0; i < 1; i++) {
 
         // Click elements
         // https://stackoverflow.com/a/22469115
@@ -31,7 +31,7 @@
             // Get department
             // TODO: Properly wait for the department to load, instead of flooding retry attempts
             const retry = 1000;
-            for (i = 0; i < retry; i++) {
+            for (let i = 0; i < retry; i++) {
                 try {
                     department = document.querySelectorAll("[data-log-name=Department]")[0]["textContent"];
                     i = retry;
@@ -87,7 +87,7 @@
         contacts = document.getElementsByClassName("ReactVirtualized__Grid__innerScrollContainer")[0]["children"];
 
         // Iterate through all contacts listed
-        for (index = 0; index < contacts.length; index++) {
+        for (let index = 0; index < contacts.length; index++) {
             console.debug('Iteration loop: ' + index)
 
             // Obtain contact ID
@@ -101,7 +101,7 @@
             // may also account for contact details taking a while to load
             // Number of times to retry if user info extraction fails
             const retry = 1;
-            for (i = 0; i < retry; i++) {
+            for (let i = 0; i < retry; i++) {
                 try {
                     // Extract currently displayed user information and save
                     let user = await extractUserFromID(contacts_entry_id);
