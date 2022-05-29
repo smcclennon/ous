@@ -5,9 +5,7 @@
 (async () => {
 
     // These need to be replaced with valid values or the API request will fail
-    const address_list_id = "a000a000-0aa0-0a0a-aa00-a000a0000a0a"
-    // x-owa-canary
-    const canary = "AAAAa0AAAAaAA0AAAaAAAaAAa00AAaaAAA00a000aAa0Aa0AA0AaaA0AaA-AaAaAAAa0AaAaAaa."
+    const base_folder_id = "a000a000-0aa0-0a0a-aa00-a000a0000a0a"
 
     // Download text to a file
     // https://stackoverflow.com/a/47359002
@@ -33,7 +31,7 @@
     // Example AddressListId: "a000a000-0aa0-0a0a-aa00-a000a0000a0a"
     // Example Offset: "300"
     // Example MaxEntriesReturned: "100"
-    async function getUsersFromAddressList(AddressListId, Offset, MaxEntriesReturned, x_owa_canary) {
+    async function getUsersFromAddressList(BaseFolderId, Offset, MaxEntriesReturned, x_owa_canary) {
         console.log('Performing API request...')
         const response = await fetch("https://outlook.office.com/owa/service.svc?action=FindPeople&app=People", {
             "credentials": "include",
@@ -49,7 +47,7 @@
                 //"x-owa-correlationid": "",
                 //"x-owa-sessionid": "",
                 // For a decoded version of x-owa-urlpostdata, please see the bottom of this file
-                "x-owa-urlpostdata": "%7B%22__type%22%3A%22FindPeopleJsonRequest%3A%23Exchange%22%2C%22Header%22%3A%7B%22__type%22%3A%22JsonRequestHeaders%3A%23Exchange%22%2C%22RequestServerVersion%22%3A%22V2018_01_08%22%2C%22TimeZoneContext%22%3A%7B%22__type%22%3A%22TimeZoneContext%3A%23Exchange%22%2C%22TimeZoneDefinition%22%3A%7B%22__type%22%3A%22TimeZoneDefinitionType%3A%23Exchange%22%2C%22Id%22%3A%22GMT%20Standard%20Time%22%7D%7D%7D%2C%22Body%22%3A%7B%22IndexedPageItemView%22%3A%7B%22__type%22%3A%22IndexedPageView%3A%23Exchange%22%2C%22BasePoint%22%3A%22Beginning%22%2C%22Offset%22%3A"+Offset+"%2C%22MaxEntriesReturned%22%3A"+MaxEntriesReturned+"%7D%2C%22QueryString%22%3Anull%2C%22ParentFolderId%22%3A%7B%22__type%22%3A%22TargetFolderId%3A%23Exchange%22%2C%22BaseFolderId%22%3A%7B%22__type%22%3A%22AddressListId%3A%23Exchange%22%2C%22Id%22%3A%22"+AddressListId+"%22%7D%7D%2C%22PersonaShape%22%3A%7B%22__type%22%3A%22PersonaResponseShape%3A%23Exchange%22%2C%22BaseShape%22%3A%22Default%22%2C%22AdditionalProperties%22%3A%5B%7B%22__type%22%3A%22PropertyUri%3A%23Exchange%22%2C%22FieldURI%22%3A%22PersonaAttributions%22%7D%2C%7B%22__type%22%3A%22PropertyUri%3A%23Exchange%22%2C%22FieldURI%22%3A%22PersonaTitle%22%7D%2C%7B%22__type%22%3A%22PropertyUri%3A%23Exchange%22%2C%22FieldURI%22%3A%22PersonaOfficeLocations%22%7D%5D%7D%2C%22ShouldResolveOneOffEmailAddress%22%3Afalse%2C%22SearchPeopleSuggestionIndex%22%3Afalse%7D%7D",
+                "x-owa-urlpostdata": "%7B%22__type%22%3A%22FindPeopleJsonRequest%3A%23Exchange%22%2C%22Header%22%3A%7B%22__type%22%3A%22JsonRequestHeaders%3A%23Exchange%22%2C%22RequestServerVersion%22%3A%22V2018_01_08%22%2C%22TimeZoneContext%22%3A%7B%22__type%22%3A%22TimeZoneContext%3A%23Exchange%22%2C%22TimeZoneDefinition%22%3A%7B%22__type%22%3A%22TimeZoneDefinitionType%3A%23Exchange%22%2C%22Id%22%3A%22GMT%20Standard%20Time%22%7D%7D%7D%2C%22Body%22%3A%7B%22IndexedPageItemView%22%3A%7B%22__type%22%3A%22IndexedPageView%3A%23Exchange%22%2C%22BasePoint%22%3A%22Beginning%22%2C%22Offset%22%3A"+Offset+"%2C%22MaxEntriesReturned%22%3A"+MaxEntriesReturned+"%7D%2C%22QueryString%22%3Anull%2C%22ParentFolderId%22%3A%7B%22__type%22%3A%22TargetFolderId%3A%23Exchange%22%2C%22BaseFolderId%22%3A%7B%22__type%22%3A%22AddressListId%3A%23Exchange%22%2C%22Id%22%3A%22"+BaseFolderId+"%22%7D%7D%2C%22PersonaShape%22%3A%7B%22__type%22%3A%22PersonaResponseShape%3A%23Exchange%22%2C%22BaseShape%22%3A%22Default%22%2C%22AdditionalProperties%22%3A%5B%7B%22__type%22%3A%22PropertyUri%3A%23Exchange%22%2C%22FieldURI%22%3A%22PersonaAttributions%22%7D%2C%7B%22__type%22%3A%22PropertyUri%3A%23Exchange%22%2C%22FieldURI%22%3A%22PersonaTitle%22%7D%2C%7B%22__type%22%3A%22PropertyUri%3A%23Exchange%22%2C%22FieldURI%22%3A%22PersonaOfficeLocations%22%7D%5D%7D%2C%22ShouldResolveOneOffEmailAddress%22%3Afalse%2C%22SearchPeopleSuggestionIndex%22%3Afalse%7D%7D",
                 //"x-req-source": "People",
                 //"Sec-Fetch-Dest": "empty",
                 //"Sec-Fetch-Mode": "cors",
@@ -73,8 +71,8 @@
     const user_db = [];
 
     // Get all users
-    const users = await getUsersFromAddressList(address_list_id, "0", "1000", canary);
-    console.log('Retrieved API results!');
+    const users = await getUsersFromAddressList(
+        base_folder_id, "0", "1000", canary)
 
     // Iterate through all users
     for (let index = 0; index < users.length; index++) {
@@ -132,7 +130,7 @@ x-owa-urlpostdata decoded:
         "__type": "TargetFolderId:#Exchange",
         "BaseFolderId": {
             "__type": "AddressListId:#Exchange",
-            "Id": AddressListId
+            "Id": BaseFolderId
         }
         },
         "PersonaShape": {
