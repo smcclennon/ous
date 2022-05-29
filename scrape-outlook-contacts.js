@@ -30,7 +30,7 @@
 
             // Get department
             // TODO: Properly wait for the department to load, instead of flooding retry attempts
-            let retry = 1000;
+            const retry = 1000;
             for (i = 0; i < retry; i++) {
                 try {
                     department = document.querySelectorAll("[data-log-name=Department]")[0]["textContent"];
@@ -71,11 +71,11 @@
                 "mode": "cors"
             })
                 .then(data => data.json());
-            user = response["Body"]["Persona"];
-            emailaddress = user["EmailAddress"]["EmailAddress"];
-            displayname = user["DisplayName"];
-            //department = ...
-            userdata = [emailaddress, displayname, '?'];
+            let user = response["Body"]["Persona"];
+            let emailaddress = user["EmailAddress"]["EmailAddress"];
+            let displayname = user["DisplayName"];
+            let department = '?';
+            let userdata = [contactID, emailaddress, displayname, department];
             return userdata;
         }
 
@@ -97,19 +97,16 @@
             contacts_entry_id = contacts_entry_id.replace("HubPersonaId_", "");
             console.log('got id: ' + contacts_entry_id);
 
-            // Create variable for storing extracted information
-            let new_user;
-
             // try-catch, as non-users (groups) will not have a department and therefore extraction will fail
             // may also account for contact details taking a while to load
             // Number of times to retry if user info extraction fails
-            let retry = 1;
+            const retry = 1;
             for (i = 0; i < retry; i++) {
                 try {
                     // Extract currently displayed user information and save
                     let user = await extractUserFromID(contacts_entry_id);
                     all_users.push(user);
-                    console.log('New user: ' + userdata);
+                    console.log('New user: ' + user);
 
                     // stop retrying, we successfully extracted
                     i = retry;
