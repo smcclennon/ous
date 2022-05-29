@@ -90,6 +90,20 @@
     // Get all users
     const users = await getUsersFromAddressList(
         base_folder_id, "0", "1000", canary)
+        .catch(e => {
+            const error_description = "API Request failed. Please check your 'x-owa-canary' is correct and valid (we retrieve this from your cookies):\ncanary = " + canary;
+            throw error_description + '\n\n' + e;
+        }
+    );
+
+    console.debug("API request successful!");
+
+    if (users == null) {
+        const error_description = "API Request returned no users. Please check your 'BaseFolderId' is valid. You can find this at the top of the program:\nbase_folder_id = " + base_folder_id;
+        throw error_description;
+    } else {
+        console.log('Retrieved API results!');
+    }
 
     // Iterate through all users
     for (let index = 0; index < users.length; index++) {
@@ -113,7 +127,9 @@
     console.debug(user_db);
 
     // Download database as a .csv file
+    console.debug('Converting to csv...')
     let user_db_csv = convertToCsv(user_db);
+    console.debug('Downloading csv...')
     saveAs(user_db_csv, 'user_db.csv');
     console.log('Downloaded results to user_db.csv!')
 })();
