@@ -1,96 +1,191 @@
-// Scrape all users on your Office 365 Outlook people directory
+// Scrape all users from an Office 365 Outlook people directory
 // github.com/smcclennon
 
 // Delete all variables created in this block once execution finishes
-for (var i = 0; i < 1; i++) {
+(async () => {
 
-    // Click elements
-    // https://stackoverflow.com/a/22469115
-    // Usage: document.getElementById("id").dispatchEvent(clickEvent);
-    var clickEvent = new MouseEvent("click", {
-        "view": window,
-        "bubbles": true,
-        "cancelable": false
-    });
+    // This needs to be replaced with valid values or the API request will fail
+    const base_folder_id = "a000a000-0aa0-0a0a-aa00-a000a0000a0a"
 
-    // Extract information about the user currently selected/displayed on the webpage
-    function getCurrentlyViewedUser() {
-        
-        // Variables
-        let email;
-        let full_name;
-        let department;
-        
-        // Get email
-        email = document.querySelectorAll("[data-log-name=Email]")[1]["children"][0]["children"][0]["children"][0]["children"][0]["children"][1]["textContent"];
+    // Get cookie. Used to get x-owa-canary
+    // https://www.tabnine.com/academy/javascript/how-to-get-cookies/
+    function getCookie(cName) {
+        const name = cName + "=";
+        const cDecoded = decodeURIComponent(document.cookie); //to be careful
+        const cArr = cDecoded.split('; ');
+        let res;
+        cArr.forEach(val => {
+          if (val.indexOf(name) === 0) res = val.substring(name.length);
+        })
+        return res
+      }
 
-        // Get full name
-        full_name = document.querySelectorAll("[data-log-name=PersonName]")[0]["textContent"];
+    // Download text to a file
+    // https://stackoverflow.com/a/47359002
+    function saveAs(text, filename){
+        var pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/plain;charset=urf-8,'+encodeURIComponent(text));
+        pom.setAttribute('download', filename);
+        pom.click();
+      };
 
-        // Get department
-        // TODO: Properly wait for the department to load, instead of flooding retry attempts
-        let retry = 1000;
-        for (i = 0; i < retry; i++) {
-            try {
-                department = document.querySelectorAll("[data-log-name=Department]")[0]["textContent"];
-                i = retry;
-            } catch (err) {
-                // If the element does not have a department, set this field to '?'
-                department = '?';
-            }
-        }
-        
-        return [email, full_name, department];
+    // Convert 2d array into comma separated values
+    // https://stackoverflow.com/a/14966131
+    function convertToCsv(rows) {
+        let csvContent = "data:text/csv;charset=utf-8,";
+
+        rows.forEach(function(rowArray) {
+            let row = rowArray.join(",");
+            csvContent += row + "\r\n";
+        });
+        return csvContent;
+    }
+    // Reverse engineered API call to retrieve an array of users in an address list
+    // Example AddressListId: "a000a000-0aa0-0a0a-aa00-a000a0000a0a"
+    // Example Offset: "300"
+    // Example MaxEntriesReturned: "100"
+    async function getUsersFromAddressList(BaseFolderId, Offset, MaxEntriesReturned, x_owa_canary) {
+        console.log('Performing API request...')
+        const response = await fetch("https://outlook.office.com/owa/service.svc?action=FindPeople&app=People", {
+            "credentials": "include",
+            "headers": {
+                "User-Agent": "Mozilla/5.0 (X11; U; Linux x86_64; en-US) Gecko/20072401 Firefox/98.0",
+                //"Accept": "*/*",
+                "Accept-Language": "en-US,en;q=0.5",
+                "action": "FindPeople",
+                "content-type": "application/json; charset=utf-8",
+                //"ms-cv": "",
+                "prefer": "exchange.behavior=\"IncludeThirdPartyOnlineMeetingProviders\"",
+                "x-owa-canary": x_owa_canary,
+                //"x-owa-correlationid": "",
+                //"x-owa-sessionid": "",
+                // For a decoded version of x-owa-urlpostdata, please see the bottom of this file
+                "x-owa-urlpostdata": "%7B%22__type%22%3A%22FindPeopleJsonRequest%3A%23Exchange%22%2C%22Header%22%3A%7B%22__type%22%3A%22JsonRequestHeaders%3A%23Exchange%22%2C%22RequestServerVersion%22%3A%22V2018_01_08%22%2C%22TimeZoneContext%22%3A%7B%22__type%22%3A%22TimeZoneContext%3A%23Exchange%22%2C%22TimeZoneDefinition%22%3A%7B%22__type%22%3A%22TimeZoneDefinitionType%3A%23Exchange%22%2C%22Id%22%3A%22GMT%20Standard%20Time%22%7D%7D%7D%2C%22Body%22%3A%7B%22IndexedPageItemView%22%3A%7B%22__type%22%3A%22IndexedPageView%3A%23Exchange%22%2C%22BasePoint%22%3A%22Beginning%22%2C%22Offset%22%3A"+Offset+"%2C%22MaxEntriesReturned%22%3A"+MaxEntriesReturned+"%7D%2C%22QueryString%22%3Anull%2C%22ParentFolderId%22%3A%7B%22__type%22%3A%22TargetFolderId%3A%23Exchange%22%2C%22BaseFolderId%22%3A%7B%22__type%22%3A%22AddressListId%3A%23Exchange%22%2C%22Id%22%3A%22"+BaseFolderId+"%22%7D%7D%2C%22PersonaShape%22%3A%7B%22__type%22%3A%22PersonaResponseShape%3A%23Exchange%22%2C%22BaseShape%22%3A%22Default%22%2C%22AdditionalProperties%22%3A%5B%7B%22__type%22%3A%22PropertyUri%3A%23Exchange%22%2C%22FieldURI%22%3A%22PersonaAttributions%22%7D%2C%7B%22__type%22%3A%22PropertyUri%3A%23Exchange%22%2C%22FieldURI%22%3A%22PersonaTitle%22%7D%2C%7B%22__type%22%3A%22PropertyUri%3A%23Exchange%22%2C%22FieldURI%22%3A%22PersonaOfficeLocations%22%7D%5D%7D%2C%22ShouldResolveOneOffEmailAddress%22%3Afalse%2C%22SearchPeopleSuggestionIndex%22%3Afalse%7D%7D",
+                //"x-req-source": "People",
+                //"Sec-Fetch-Dest": "empty",
+                //"Sec-Fetch-Mode": "cors",
+                //"Sec-Fetch-Site": "same-origin",
+                //"Sec-GPC": "1",
+                "Pragma": "no-cache",
+                "Cache-Control": "no-cache"
+            },
+            "method": "POST",
+            //"mode": "cors"
+        })
+            .then(data => data.json());
+
+        // Array(143) [ {…}, {…}, {…} … ]
+        let users = response.Body.ResultSet;
+        return users
     }
 
+    // Get x-owa-canary
+    console.debug('Getting x-owa-canary...')
+    const canary = getCookie("X-OWA-CANARY");
 
-    // Store all extracted user information
-    const all_users = [];
+    // Store all extracted user data
+    // [[id1, John Smith, jsmith@example.com], [id2, Foo Bar, fbar@example.com]]
+    const user_db = [];
 
-    // Contacts list being displayed 
-    // HTMLCollection { 0: div, 1: div, 2: div, 3: div, 4: div, 5: div, 6: div, 7: div, 8: div, 9: div, … }
-    contacts = document.getElementsByClassName("ReactVirtualized__Grid__innerScrollContainer")[0]["children"];
-
-    // Iterate through all contacts listed
-    for (index = 0; index < contacts.length; index++) {
-
-        // Obtain contact element
-        let contacts_listitem = contacts[index];
-        let contacts_entry = contacts_listitem["children"][0]
-        
-        // Click contact
-        contacts_entry.dispatchEvent(clickEvent);
-
-
-        // Create variable for storing extracted information
-        let new_user;
-
-        // try-catch, as non-users (groups) will not have a department and therefore extraction will fail
-        // may also account for contact details taking a while to load
-        // Number of times to retry if user info extraction fails
-        let retry = 1;
-        for (i = 0; i < retry; i++) {
-            try {
-                // Extract currently displayed user information
-                new_user = getCurrentlyViewedUser();
-
-                // Add user information to the all_users array
-                all_users.push(new_user);
-
-                console.log('New user: ' + new_user);
-
-                // stop retrying, we successfully extracted
-                i = retry;
-            
-            } catch (err) {
-                console.log('Error occurred during user info extraction: Attempt ' + i + ': ' + err);
-            }
+    // Get all users
+    const users = await getUsersFromAddressList(
+        base_folder_id, "0", "1000", canary)
+        .catch(e => {
+            const error_description = "API Request failed. Please check your 'x-owa-canary' is correct and valid (we retrieve this from your cookies):\ncanary = " + canary;
+            throw error_description + '\n\n' + e;
         }
-        // TODO: Auto-scroll down the contacts list to load more elements. Wait for elements to load correctly.
+    );
+
+    console.debug("API request successful!");
+
+    if (users == null) {
+        const error_description = "API Request returned no users. Please check your 'BaseFolderId' is valid. You can find this at the top of the program:\nbase_folder_id = " + base_folder_id;
+        throw error_description;
+    } else {
+        console.log('Retrieved API results!');
     }
-    
-    // TODO: Download all_users as a .csv file
-    console.log(all_users);
+
+    // Iterate through all users
+    for (let index = 0; index < users.length; index++) {
+        console.debug('\nAccessing user at index: ' + index)
+
+        // Extract information from user API data
+        let user = users[index];
+        let displayname = user.DisplayName;
+        let emailaddress = user.EmailAddress.EmailAddress
+        let id = user.PersonaId.Id;
+
+        // Compile extracted information into an array
+        let userdata = [id, displayname, emailaddress];
+
+        // Save compiled user information
+        user_db.push(userdata);
+        console.debug('New user: ' + userdata);
+    }
+
+    // Print user_db array to console
+    console.debug(user_db);
+
+    // Download database as a .csv file
+    console.debug('Converting to csv...')
+    let user_db_csv = convertToCsv(user_db);
+    console.debug('Downloading csv...')
+    saveAs(user_db_csv, 'user_db.csv');
+    console.log('Downloaded results to user_db.csv!')
+})();
+
+// Project inspired by: https://github.com/edubey/browser-console-crawl/blob/master/single-story.js
+
+/*
+x-owa-urlpostdata decoded:
+{
+    "__type": "FindPeopleJsonRequest:#Exchange",
+    "Header": {
+        "__type": "JsonRequestHeaders:#Exchange",
+        "RequestServerVersion": "V2018_01_08",
+        "TimeZoneContext": {
+        "__type": "TimeZoneContext:#Exchange",
+        "TimeZoneDefinition": {
+            "__type": "TimeZoneDefinitionType:#Exchange",
+            "Id": "GMT Standard Time"
+        }
+        }
+    },
+    "Body": {
+        "IndexedPageItemView": {
+        "__type": "IndexedPageView:#Exchange",
+        "BasePoint": "Beginning",
+        "Offset": Offset,
+        "MaxEntriesReturned": MaxEntriesReturned
+        },
+        "QueryString": null,
+        "ParentFolderId": {
+        "__type": "TargetFolderId:#Exchange",
+        "BaseFolderId": {
+            "__type": "AddressListId:#Exchange",
+            "Id": BaseFolderId
+        }
+        },
+        "PersonaShape": {
+        "__type": "PersonaResponseShape:#Exchange",
+        "BaseShape": "Default",
+        "AdditionalProperties": [
+            {
+            "__type": "PropertyUri:#Exchange",
+            "FieldURI": "PersonaAttributions"
+            },
+            {
+            "__type": "PropertyUri:#Exchange",
+            "FieldURI": "PersonaTitle"
+            },
+            {
+            "__type": "PropertyUri:#Exchange",
+            "FieldURI": "PersonaOfficeLocations"
+            }
+        ]
+        },
+        "ShouldResolveOneOffEmailAddress": false,
+        "SearchPeopleSuggestionIndex": false
+    }
 }
-
-// Inspired by: https://github.com/edubey/browser-console-crawl/blob/master/single-story.js
+*/
