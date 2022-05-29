@@ -9,11 +9,32 @@
     // x-owa-canary
     const canary = "AAAAa0AAAAaAA0AAAaAAAaAAa00AAaaAAA00a000aAa0Aa0AA0AaaA0AaA-AaAaAAAa0AaAaAaa."
 
+    // Download text to a file
+    // https://stackoverflow.com/a/47359002
+    function saveAs(text, filename){
+        var pom = document.createElement('a');
+        pom.setAttribute('href', 'data:text/plain;charset=urf-8,'+encodeURIComponent(text));
+        pom.setAttribute('download', filename);
+        pom.click();
+      };
+
+    // Convert 2d array into comma separated values
+    // https://stackoverflow.com/a/14966131
+    function convertToCsv(rows) {
+        let csvContent = "data:text/csv;charset=utf-8,";
+
+        rows.forEach(function(rowArray) {
+            let row = rowArray.join(",");
+            csvContent += row + "\r\n";
+        });
+        return csvContent;
+    }
     // Reverse engineered API call to retrieve an array of users in an address list
     // Example AddressListId: "a000a000-0aa0-0a0a-aa00-a000a0000a0a"
     // Example Offset: "300"
     // Example MaxEntriesReturned: "100"
     async function getUsersFromAddressList(AddressListId, Offset, MaxEntriesReturned, x_owa_canary) {
+        console.log('Performing API request...')
         const response = await fetch("https://outlook.office.com/owa/service.svc?action=FindPeople&app=People", {
             "credentials": "include",
             "headers": {
@@ -53,7 +74,7 @@
 
     // Get all users
     const users = await getUsersFromAddressList(address_list_id, "0", "1000", canary);
-    console.log(users);
+    console.log('Retrieved API results!');
 
     // Iterate through all users
     for (let index = 0; index < users.length; index++) {
@@ -70,11 +91,16 @@
 
         // Save compiled user information
         user_db.push(userdata);
-        console.log('New user: ' + userdata);
+        console.debug('New user: ' + userdata);
     }
 
-    // TODO: Download user_db as a .csv file
-    console.log(user_db);
+    // Print user_db array to console
+    console.debug(user_db);
+
+    // Download database as a .csv file
+    let user_db_csv = convertToCsv(user_db);
+    saveAs(user_db_csv, 'user_db.csv');
+    console.log('Downloaded results to user_db.csv!')
 })();
 
 // Project inspired by: https://github.com/edubey/browser-console-crawl/blob/master/single-story.js
