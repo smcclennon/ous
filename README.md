@@ -33,7 +33,7 @@ Below is the data structure of the `.csv` file generated, formatted as a Markdow
 2. Press `F12` to launch the "Developer Tools" popup.
 3. Navigate to the "Console" tab within the Developer Tools popup.
 4. Paste [this](https://raw.githubusercontent.com/smcclennon/ous/master/scrape-outlook-contacts.js) JavaScript code into the Developer Tools Console (don't execute it yet).
-5. Edit the code you just pasted and change `const base_folder_id = ""` so that your BaseFolderId is within the quotation marks. Please see below on how to get a BaseFolderId.
+5. Edit the code you just pasted and change `const base_folder_id = ""` so that your BaseFolderId is within the quotation marks. Please see [below](#How-to-get-a-BaseFolderId) on how to get a BaseFolderId.
 6. Press `Enter` to execute the code in the Console. Userdata will be printed to the console and downloaded to your computer shortly. If something went wrong, you will receive a JavaScript error in the Console, so make sure your Console is not filtering out errors.
 
 ## How to get a BaseFolderId
@@ -52,7 +52,7 @@ Below is the data structure of the `.csv` file generated, formatted as a Markdow
 7. Paste those request headers into any text editor and then identify the `x-owa-urlpostdata` header.
 8. Copy the contents of the `x-owa-urlpostdata` header and paste them into a URL decoder such as: https://www.freeformatter.com/url-encoder.html. *This step isn't necessary, but makes it easier to read the header if you are unfamiliar with URL escape codes.*
 9. Copy the decoded header content into any text editor, and identify the `BaseFolderId` key.
-10. Copy the `Id` child-key (`["BaseFolderId"]["Id"]`). This should look something like `a000a000-0aa0-0a0a-aa00-a000a0000a0a`.
+10. Copy the `Id` child-key (`["BaseFolderId"]["Id"]`) value. This should look something like `a000a000-0aa0-0a0a-aa00-a000a0000a0a`.
 11. The value you just copied is your BaseFolderId.
 
 ## Appendix
@@ -114,11 +114,11 @@ The API responds with a list of users. Below is the data structure returned per 
 ]
 ```
 
-### `x-owa-urlpostdata` decoded
+### x-owa-urlpostdata decoded
 `x-owa-urlpostdata` is a header used in the POST request to the Outlook API. We customise the following values in this header:
 - `Offset`: Starting index of users to send. An offset of `20` will not return the first 20 users. By default, an offset of `0` is used to return all users.
 - `MaxEntriesReturned`: Maximum number of users to be returned by the API. See the [Example API response](#Example-API-response) appendix to view the information returned per user. By default, we request a maximum of `1000` users to be returned. However, you can increase this if you need to.
-- `BaseFolderId Id`: This is the Outlook userlist/directory to return in the API response. This is tedious to obtain, but essential and must be valid or the API request will fail.
+- `BaseFolderId Id`: This is the Outlook userlist/directory to return in the API response. This is tedious to obtain, but is essential and must be valid or the API request will fail.
 ```json
 {
     "__type": "FindPeopleJsonRequest:#Exchange",
