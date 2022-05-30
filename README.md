@@ -33,7 +33,7 @@ Below is the data structure of the `.csv` file generated, formatted as a Markdow
 2. Press `F12` to launch the "Developer Tools" popup.
 3. Navigate to the "Console" tab within the Developer Tools popup.
 4. Paste [this](https://raw.githubusercontent.com/smcclennon/ous/master/scrape-outlook-contacts.js) JavaScript code into the Developer Tools Console (don't execute it yet).
-5. Edit the code you just pasted and change `const base_folder_id = ""` so that your BaseFolderId is within the quotation marks. Please see [below](#How-to-get-a-BaseFolderId) on how to get a BaseFolderId.
+5. Edit the code you just pasted and change `const base_folder_id = ""` so that your BaseFolderId is within the quotation marks. *Please see [below](#How-to-get-a-BaseFolderId) for how to get a BaseFolderId.* This is the line you should be changing:
 https://github.com/smcclennon/ous/blob/ea840034e31ab92a6806f364074d220c73254583/scrape-outlook-contacts.js#L9
 6. Press `Enter` to execute the code in the Console. Userdata will be printed to the console and downloaded to your computer shortly. If something went wrong, you will receive a JavaScript error in the Console, so make sure your Console is not filtering out errors.
 
