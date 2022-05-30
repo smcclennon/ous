@@ -105,7 +105,7 @@
         const error_description = "API Request returned no users. Please check your 'BaseFolderId' is valid. You can find this at the top of the program:\nbase_folder_id = " + base_folder_id;
         throw error_description;
     } else {
-        console.log('Retrieved API results!');
+        console.log('Retrieved ' + users.length + ' users!');
     }
 
     // Iterate through all users
