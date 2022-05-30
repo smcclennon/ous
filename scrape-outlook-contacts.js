@@ -33,7 +33,8 @@
     // Convert 2d array into comma separated values
     // https://stackoverflow.com/a/14966131
     function convertToCsv(rows) {
-        let csvContent = "data:text/csv;charset=utf-8,";
+        //let csvContent = "data:text/csv;charset=utf-8,";
+        let csvContent = "";
 
         rows.forEach(function(rowArray) {
             let row = rowArray.join(",");
