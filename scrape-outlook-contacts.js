@@ -82,6 +82,9 @@
     // Get x-owa-canary
     console.debug('Getting x-owa-canary...')
     const canary = getCookie("X-OWA-CANARY");
+    if (canary == undefined) {
+		throw "Couldn't retrieve x-owa-canary from your cookies! Please make sure you run this code on a console window for https://outlook.office.com and that you are logged in, then try again."
+	}
 
     // Store all extracted user data
     // [[id1, John Smith, jsmith@example.com], [id2, Foo Bar, fbar@example.com]]
