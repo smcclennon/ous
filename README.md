@@ -171,3 +171,7 @@ The API responds with a list of users. Below is the data structure returned per 
     }
 }
 ```
+
+## Special thanks
+- [`@edubey`](https://github.com/edubey) - [Inspiration](https://github.com/edubey/browser-console-crawl/blob/master/single-story.js) for the project.
+- [`@freddierick`](https://github.com/freddierick) - [Async fix](https://github.com/smcclennon/ous/commit/7ae0bc62468ddddc435481b7dae3abad8800890c) to make everything wait for the API `fetch()` request to complete.
