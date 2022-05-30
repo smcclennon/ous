@@ -5,7 +5,7 @@ This project reverse engineers the Office 365 Outlook webapp API, collecting all
 
 The `x-owa-canary` cookie is automatically retrieved from your browser and used to authenticate the API request. The API response is then parsed and entered into a 2d array. This array is then converted into a comma-separated-value format which is then downloaded as `user_db.csv` via your browser.
 
-![image](https://user-images.githubusercontent.com/24913281/170899229-8676c592-69e5-4026-9134-61feda1c153f.png)
+![Screenshot of the console output](https://user-images.githubusercontent.com/24913281/171004970-aca646f3-8f60-46e9-a49a-5e9d932d3c94.png)
 
 ### Sample csv
 Below is the data structure of the `.csv` file generated, formatted as a Markdown table (information redacted):
