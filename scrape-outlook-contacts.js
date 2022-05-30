@@ -1,13 +1,14 @@
-// Scrape all users from an Office 365 Outlook people directory
-// github.com/smcclennon
+// Scrape users in your Office 365 organisation
+// github.com/smcclennon/ous
 
 // Delete all variables created in this block once execution finishes
 (async () => {
 
-    // This needs to be replaced with valid values or the API request will fail
+    // This needs to be replaced with a valid BaseFolderId or the API request will fail
+    // How to obtain a BaseFolderId: https://github.com/smcclennon/ous#how-to-get-a-basefolderid
     const base_folder_id = "a000a000-0aa0-0a0a-aa00-a000a0000a0a"
 
-    // Get cookie. Used to get x-owa-canary
+    // Get a cookie from the browser. Used to get the x-owa-canary authentication cookie
     // https://www.tabnine.com/academy/javascript/how-to-get-cookies/
     function getCookie(cName) {
         const name = cName + "=";
@@ -40,7 +41,8 @@
         });
         return csvContent;
     }
-    // Reverse engineered API call to retrieve an array of users in an address list
+
+    // Reverse engineered API call to retrieve an array of users in an Outlook directory
     // Example AddressListId: "a000a000-0aa0-0a0a-aa00-a000a0000a0a"
     // Example Offset: "300"
     // Example MaxEntriesReturned: "100"
@@ -59,7 +61,7 @@
                 "x-owa-canary": x_owa_canary,
                 //"x-owa-correlationid": "",
                 //"x-owa-sessionid": "",
-                // For a decoded version of x-owa-urlpostdata, please see the bottom of this file
+                // For a decoded version of x-owa-urlpostdata, please see: https://github.com/smcclennon/ous#x-owa-urlpostdata-decoded
                 "x-owa-urlpostdata": "%7B%22__type%22%3A%22FindPeopleJsonRequest%3A%23Exchange%22%2C%22Header%22%3A%7B%22__type%22%3A%22JsonRequestHeaders%3A%23Exchange%22%2C%22RequestServerVersion%22%3A%22V2018_01_08%22%2C%22TimeZoneContext%22%3A%7B%22__type%22%3A%22TimeZoneContext%3A%23Exchange%22%2C%22TimeZoneDefinition%22%3A%7B%22__type%22%3A%22TimeZoneDefinitionType%3A%23Exchange%22%2C%22Id%22%3A%22GMT%20Standard%20Time%22%7D%7D%7D%2C%22Body%22%3A%7B%22IndexedPageItemView%22%3A%7B%22__type%22%3A%22IndexedPageView%3A%23Exchange%22%2C%22BasePoint%22%3A%22Beginning%22%2C%22Offset%22%3A"+Offset+"%2C%22MaxEntriesReturned%22%3A"+MaxEntriesReturned+"%7D%2C%22QueryString%22%3Anull%2C%22ParentFolderId%22%3A%7B%22__type%22%3A%22TargetFolderId%3A%23Exchange%22%2C%22BaseFolderId%22%3A%7B%22__type%22%3A%22AddressListId%3A%23Exchange%22%2C%22Id%22%3A%22"+BaseFolderId+"%22%7D%7D%2C%22PersonaShape%22%3A%7B%22__type%22%3A%22PersonaResponseShape%3A%23Exchange%22%2C%22BaseShape%22%3A%22Default%22%2C%22AdditionalProperties%22%3A%5B%7B%22__type%22%3A%22PropertyUri%3A%23Exchange%22%2C%22FieldURI%22%3A%22PersonaAttributions%22%7D%2C%7B%22__type%22%3A%22PropertyUri%3A%23Exchange%22%2C%22FieldURI%22%3A%22PersonaTitle%22%7D%2C%7B%22__type%22%3A%22PropertyUri%3A%23Exchange%22%2C%22FieldURI%22%3A%22PersonaOfficeLocations%22%7D%5D%7D%2C%22ShouldResolveOneOffEmailAddress%22%3Afalse%2C%22SearchPeopleSuggestionIndex%22%3Afalse%7D%7D",
                 //"x-req-source": "People",
                 //"Sec-Fetch-Dest": "empty",
@@ -80,11 +82,13 @@
     }
 
     // Get x-owa-canary
-    console.debug('Getting x-owa-canary...')
+    console.debug('Getting x-owa-canary cookie...')
     const canary = getCookie("X-OWA-CANARY");
     if (canary == undefined) {
 		throw "Couldn't retrieve x-owa-canary from your cookies! Please make sure you run this code on a console window for https://outlook.office.com and that you are logged in, then try again."
-	}
+	} else {
+        console.debug('Using x-owa-canary: ' + canary);
+    }
 
     // Store all extracted user data
     // [[id1, John Smith, jsmith@example.com], [id2, Foo Bar, fbar@example.com]]
@@ -94,15 +98,15 @@
     const users = await getUsersFromAddressList(
         base_folder_id, "0", "1000", canary)
         .catch(e => {
-            const error_description = "API Request failed. Please check your 'x-owa-canary' is correct and valid (we retrieve this from your cookies):\ncanary = " + canary;
-            throw error_description + '\n\n' + e;
+            const error_description = "API Request failed. Please check your 'x-owa-canary' is correct and valid.\n\nWe automatically collected this from your cookies, so try logging out and logging back into https://outlook.office.com.\n\ncanary = " + canary + '\n\nAPI request/response error:\n' + e;
+            throw error_description;
         }
     );
 
     console.debug("API request successful!");
 
     if (users == null | users.length == 0) {
-        const error_description = "API Request returned no users. Please check your 'BaseFolderId' is valid. You can find this at the top of the program:\nbase_folder_id = " + base_folder_id;
+        const error_description = "API Request returned no users. Please check your 'BaseFolderId' is valid. You can find this at the top of the program:\nbase_folder_id = " + base_folder_id + '\n\nHow to obtain a BaseFolderId: https://github.com/smcclennon/ous#how-to-get-a-basefolderid\n\nIt is also possible that the user directory you collected the BaseFolderId for is empty and contains no users. If this is the case, please try using the BaseFolderId for a user directory containing at least 1 user and try again.';
         throw error_description;
     } else {
         console.log('Retrieved ' + users.length + ' users!');
@@ -127,68 +131,13 @@
     }
 
     // Print user_db array to console
+    console.debug('\nUser array:')
     console.debug(user_db);
 
     // Download database as a .csv file
-    console.debug('Converting to csv...')
+    console.debug('Converting user array to csv...')
     let user_db_csv = convertToCsv(user_db);
     console.debug('Downloading csv...')
     saveAs(user_db_csv, 'user_db.csv');
     console.log('Downloaded results to user_db.csv!')
 })();
-
-// Project inspired by: https://github.com/edubey/browser-console-crawl/blob/master/single-story.js
-
-/*
-x-owa-urlpostdata decoded:
-{
-    "__type": "FindPeopleJsonRequest:#Exchange",
-    "Header": {
-        "__type": "JsonRequestHeaders:#Exchange",
-        "RequestServerVersion": "V2018_01_08",
-        "TimeZoneContext": {
-        "__type": "TimeZoneContext:#Exchange",
-        "TimeZoneDefinition": {
-            "__type": "TimeZoneDefinitionType:#Exchange",
-            "Id": "GMT Standard Time"
-        }
-        }
-    },
-    "Body": {
-        "IndexedPageItemView": {
-        "__type": "IndexedPageView:#Exchange",
-        "BasePoint": "Beginning",
-        "Offset": Offset,
-        "MaxEntriesReturned": MaxEntriesReturned
-        },
-        "QueryString": null,
-        "ParentFolderId": {
-        "__type": "TargetFolderId:#Exchange",
-        "BaseFolderId": {
-            "__type": "AddressListId:#Exchange",
-            "Id": BaseFolderId
-        }
-        },
-        "PersonaShape": {
-        "__type": "PersonaResponseShape:#Exchange",
-        "BaseShape": "Default",
-        "AdditionalProperties": [
-            {
-            "__type": "PropertyUri:#Exchange",
-            "FieldURI": "PersonaAttributions"
-            },
-            {
-            "__type": "PropertyUri:#Exchange",
-            "FieldURI": "PersonaTitle"
-            },
-            {
-            "__type": "PropertyUri:#Exchange",
-            "FieldURI": "PersonaOfficeLocations"
-            }
-        ]
-        },
-        "ShouldResolveOneOffEmailAddress": false,
-        "SearchPeopleSuggestionIndex": false
-    }
-}
-*/
