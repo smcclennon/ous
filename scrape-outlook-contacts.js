@@ -99,13 +99,16 @@
     const users = await getUsersFromAddressList(
         base_folder_id, "0", "1000", canary)
         .catch(e => {
+            // API declined our request
             const error_description = "API Request failed. Please check your 'x-owa-canary' is correct and valid.\n\nWe automatically collected this from your cookies, so try logging out and logging back into https://outlook.office.com.\n\ncanary = " + canary + '\n\nAPI request/response error:\n' + e;
             throw error_description;
         }
     );
 
+    // API accepted our request and responsed
     console.debug("API request successful!");
 
+    // If API response contained no users
     if (users == null | users.length == 0) {
         const error_description = "API Request returned no users. Please check your 'BaseFolderId' is valid. You can find this at the top of the program:\nbase_folder_id = " + base_folder_id + '\n\nHow to obtain a BaseFolderId: https://github.com/smcclennon/ous#how-to-get-a-basefolderid\n\nIt is also possible that the user directory you collected the BaseFolderId for is empty and contains no users. If this is the case, please try using the BaseFolderId for a user directory containing at least 1 user and try again.';
         throw error_description;
