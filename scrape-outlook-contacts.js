@@ -93,7 +93,8 @@
 
     // Store all extracted user data
     // [[id1, John Smith, jsmith@example.com], [id2, Foo Bar, fbar@example.com]]
-    const user_db = [];
+    // Initiate with field names for when user_db is converted into csv format
+    const user_db = [['PersonaId', 'DisplayName', 'EmailAddress']];
 
     // Get all users
     const users = await getUsersFromAddressList(
