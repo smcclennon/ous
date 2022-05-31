@@ -3,9 +3,9 @@ Export everyone in your Office 365 organisation into a `.csv` in seconds, straig
 
 This project reverse engineers the Office 365 Outlook webapp API, collecting all users in an Outlook directory via a single API request. All you have to do is obtain a `BaseFolderID` and paste JavaScript code into your browser console. All users within that BaseFolder will be downloaded to a .csv file on your computer.
 
-The `x-owa-canary` cookie is automatically retrieved from your browser and used to authenticate the API request. The API response is then parsed and entered into a 2d array. This array is then converted into a comma-separated-value format which is then downloaded as `user_db.csv` via your browser.
+The `x-owa-canary` cookie is automatically retrieved from your browser and used to authenticate the API request. The API response is then parsed and entered into a 2d array. This array is then converted into a comma-separated-value format which is then downloaded as a `.csv` file via your browser.
 
-![Screenshot of the console output](https://user-images.githubusercontent.com/24913281/171004970-aca646f3-8f60-46e9-a49a-5e9d932d3c94.png)
+![Screenshot of the console output](https://user-images.githubusercontent.com/24913281/171161560-74377a83-0839-41af-8700-ac1bb2d04b38.png)
 
 ### Sample csv
 Below is the data structure of the `.csv` file generated, formatted as a Markdown table (information redacted):

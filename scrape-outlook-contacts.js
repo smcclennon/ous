@@ -8,6 +8,23 @@
     // How to obtain a BaseFolderId: https://github.com/smcclennon/ous#how-to-get-a-basefolderid
     const base_folder_id = "a000a000-0aa0-0a0a-aa00-a000a0000a0a"
 
+    // See bottom of the file for the csv export filename
+
+    // Get date and time. Used for filename when saving .csv
+    function getDateTime() {
+        const year = new Date().getFullYear();
+        const month = new Date().getMonth() + 1; //0-11 + 1
+        const day = new Date().getDay();
+        const date = year + '-' + month + '-' + day;
+        
+        const hours = new Date().getHours();
+        const minutes = new Date().getMinutes();
+        const seconds = new Date().getSeconds();
+        const time = hours + '-' + minutes + '-' + seconds;
+        
+        // 2022-5-2_10-42-40
+        return date + '_' + time;
+    }
     // Get a cookie from the browser. Used to get the x-owa-canary authentication cookie
     // https://www.tabnine.com/academy/javascript/how-to-get-cookies/
     function getCookie(cName) {
@@ -139,10 +156,20 @@
     console.debug('\nUser array:')
     console.debug(user_db);
 
+    // .csv export filename
+    let export_filename = "office365_export";
+    export_filename += "__";
+    export_filename += base_folder_id;  // Add a000a000-0aa0-0a0a-aa00-a000a0000a0a
+    export_filename += "__";
+    export_filename += getDateTime();  // Add 2022-5-2_10-42-40
+    export_filename += '.csv';  // Add file extension
+    // Final: office365_export__a000a000-0aa0-0a0a-aa00-a000a0000a0a__2022-5-2_10-42-40.csv
+
+
     // Download database as a .csv file
     console.debug('Converting user array to csv...')
     let user_db_csv = convertToCsv(user_db);
     console.debug('Downloading csv...')
-    saveAs(user_db_csv, 'user_db.csv');
-    console.log('Downloaded results to user_db.csv!')
+    saveAs(user_db_csv, export_filename);
+    console.log('Downloaded results to "'+ export_filename+'"!');
 })();
