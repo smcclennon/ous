@@ -49,7 +49,9 @@ https://github.com/smcclennon/ous/blob/ea840034e31ab92a6806f364074d220c73254583/
 
 ![image](https://user-images.githubusercontent.com/24913281/170897905-2f3b13d0-6e20-4bc8-b185-9fe1d1c84c77.png)
 
-6. Right click that request and select "copy request headers".
+6. Right click that request and from the dropdown, select:
+    - Chrome: "Copy" -> "Copy as fetch".
+    - Firefox: "Copy" -> "Copy Request Headers".
 7. Paste those request headers into any text editor and then identify the `x-owa-urlpostdata` header.
 8. Copy the contents of the `x-owa-urlpostdata` header and paste them into a URL decoder such as: https://www.freeformatter.com/url-encoder.html. *This step isn't necessary, but makes it easier to read the header if you are unfamiliar with URL escape codes.*
 9. Copy the decoded header content into any text editor, and identify the `BaseFolderId` key.
