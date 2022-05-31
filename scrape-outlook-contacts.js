@@ -121,10 +121,10 @@
         let user = users[index];
         let displayname = user.DisplayName;
         let emailaddress = user.EmailAddress.EmailAddress
-        let id = user.PersonaId.Id;
+        let personaid = user.PersonaId.Id;
 
         // Compile extracted information into an array
-        let userdata = [id, displayname, emailaddress];
+        let userdata = [personaid, displayname, emailaddress];
 
         // Save compiled user information
         user_db.push(userdata);

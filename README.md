@@ -9,7 +9,7 @@ The `x-owa-canary` cookie is automatically retrieved from your browser and used 
 
 ### Sample csv
 Below is the data structure of the `.csv` file generated, formatted as a Markdown table (information redacted):
-|Outlook ID| Full Name|Email Address|
+|Persona Id| Full Name|Email Address|
 |:-:|:-:|:-:|
 |AAUQAGAxxxxxxxxxxxxxxxxT2rY=|Aa___ P___|P___@domain.org|
 |AAUQAP2xxxxxxxxxxxxxxxxVfSs=|Ab___ E___|E___@domain.org|
@@ -21,7 +21,7 @@ Below is the data structure of the `.csv` file generated, formatted as a Markdow
 |AAUQABdxxxxxxxxxxxxxxxxsi1w=|Al___ D___|D___@domain.org|
 
 ## Features
-- Retrieve full name, email address and unique Outlook ID by default
+- Retrieve full name, email address and unique Persona Id by default
 - Export all users to a `.csv` file
 - Very portable, simply paste code into your browser console
 - Quiet network traffic (only 1 request)
